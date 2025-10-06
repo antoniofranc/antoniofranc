@@ -1,6 +1,6 @@
 # <a href="https://www.linkedin.com/in/antoniofrancisco-085948210/">Antonio Francisco</a>'s Cybersecurity Project Portfolio 🔐
 
-I'm deeply passionate about cybersecurity and thrive on tackling complex security problems through hands-on development. From vulnerability assessments to threat hunting, my projects reflect my commitment to understanding and improving security operations. Dive into my repositories and see what I'm building!"
+I'm deeply passionate about cybersecurity and thrive on tackling complex security problems through hands-on development. From vulnerability assessments to threat hunting, my projects reflect my commitment to understanding and improving security operations. Dive into my repositories and see what I'm building!
 
 
 ## ⚠️ Vulnerability Management Projects

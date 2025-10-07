@@ -25,8 +25,6 @@
     PS C:\> .\__remediation_template(STIG-ID-WN10-AU-000500).ps1 
 #>
 
-
-
 # Set the registry path and value
 $regPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Application"
 $valueName = "MaxSize"

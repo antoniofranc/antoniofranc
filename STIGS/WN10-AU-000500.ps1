@@ -20,8 +20,11 @@
     PowerShell Ver. :  5.1
 
 .USAGE
-    Put any usage instructions here.
-    Example syntax:
+     Description:
+        This script ensures the Application event log maximum size is at least 32 MB
+        (32,768 KB) in compliance with STIG ID WN10-AU-000500.
+
+    Example Syntax:
     PS C:\> .\__remediation_template(STIG-ID-WN10-AU-000500).ps1 
 #>
 

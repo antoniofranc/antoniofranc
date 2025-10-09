@@ -57,19 +57,6 @@ if ($currentValue -ne $expectedValue) {
 } else {
     Write-Host "✅ Compliant: '$valueName' is correctly set to $expectedValue"
 }
-🔍 Verification
-To verify compliance after running the script:
-
-powershell
-Copy code
-Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\LSA\MSV1_0" -Name allownullsessionfallback
-Expected output:
-
-yaml
-Copy code
-allownullsessionfallback : 0
-Would you like me to make a check-only version (no registry changes, just reports “Compliant” or “Finding”) next?
-
 
 
 

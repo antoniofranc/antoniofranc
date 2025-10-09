@@ -1,5 +1,4 @@
 <#
-
 .SYNOPSIS
     Verifies and configures the Secondary Logon service to be disabled as per STIG WN10-00-000175.
 

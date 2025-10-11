@@ -11,6 +11,7 @@ I'm deeply passionate about cybersecurity and thrive on tackling complex securit
 ## 🚨 Threat Hunting and Security Operations
 
 - **[Threat Hunting Scenario (Tor Browser Usage)](https://github.com/antoniofranc/Threat-hunting-scenario-tor-/blob/main/README.md)**
+- **[Threat Hunting Scenario (Impossible Travel Detection)](https://github.com/antoniofranc/Threat-Hunting-Scenario-Impossible-Travel-Detection/blob/main/README.md)**
 
 <hr/>
 

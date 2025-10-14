@@ -12,6 +12,7 @@ I'm deeply passionate about cybersecurity and thrive on tackling complex securit
 
 - **[Threat Hunting Scenario (Tor Browser Usage)](https://github.com/antoniofranc/Threat-hunting-scenario-tor-/blob/main/README.md)**
 - **[Threat Hunting Scenario (Impossible Travel Detection)](https://github.com/antoniofranc/Threat-Hunting-Scenario-Impossible-Travel-Detection/blob/main/README.md)**
+- **[Threat Hunting Scenario (Firefox Used as a Web Shell Relay)](https://github.com/antoniofranc/Threat-Hunt-Scenario-Firefox-as-a-Web-Shell-Relay-/blob/main/README.md)**
 
 <hr/>
 

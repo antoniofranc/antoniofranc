@@ -87,6 +87,24 @@ DeviceProcessEvents
 
 ---
 
+### 5. Searched the DeviceProcessEvents Table for Cleanup
+
+While reviewing the `DeviceProcessEvents` table for post-exfiltration activity, I observed a cleanup command executed at `2025-10-22T00:07:01.760647Z`: `xargs rm -f`. The use of xargs piped to rm -f is consistent with scripted deletion of one or more files and is likely an attempt to remove super_secret_script.sh and other artifacts to frustrate forensic recovery.
+
+```kql
+DeviceProcessEvents
+| where Timestamp >= datetime(2025-10-21T23:59:46.704196Z)
+| where DeviceName contains "Iclab"
+| where InitiatingProcessCommandLine contains "rm"
+| project Timestamp, DeviceName, ActionType, InitiatingProcessCommandLine
+| order by Timestamp asc
+```
+
+<img width="1424" height="555" alt="Screenshot 2025-10-22 014117" src="https://github.com/user-attachments/assets/bea8d30a-d67b-44b8-a86b-da09e1f9ff78" />
+
+---
+
+
 ## Chronological Event Timeline 
 
 ### 1. Suspicious Login Detected

@@ -22,19 +22,13 @@ I searched the `DeviceFileEvents` table for file activity during the suspected i
 **Query used to locate events:**
 
 ```kql
-// Locate Instances of Potential Impossible Travel
-let TimePeriodThreshold = timespan(7d); // Change to how far back you want to look
-let NumberOfDifferentLocationsAllowed = 2;
-SigninLogs
-| where TimeGenerated > ago(TimePeriodThreshold)
-| summarize Count = count() by UserPrincipalName, UserId, City = tostring(parse_json(LocationDetails).city), State = tostring(parse_json(LocationDetails).state), Country = tostring(parse_json(LocationDetails).countryOrRegion)
-| project UserPrincipalName, City, State, Country
-| summarize PotentialImpossibleTravelInstances = count () by UserPrincipalName
-| where PotentialImpossibleTravelInstances > NumberOfDifferentLocationsAllowed
+DeviceFileEvents
+| where DeviceName contains "Iclab"
+| where ActionType == "FileCreated"
+| order by Timestamp asc
 ```
-<div style="display:flex;flex-direction:column;gap:10px">
-  <img src="https://res.cloudinary.com/dk3bkl3ji/image/upload/v1760154342/Screenshot_2025-10-10_234316_s71u5u.png">
-</div>
+<img width="1892" height="755" alt="Screenshot 2025-10-21 220336" src="https://github.com/user-attachments/assets/578c63cd-87c8-42a8-a915-4db6734c006e" />
+
 
 ---
 

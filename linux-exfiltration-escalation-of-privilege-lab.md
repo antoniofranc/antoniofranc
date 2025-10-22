@@ -89,7 +89,7 @@ DeviceProcessEvents
 
 ### 5. Searched the DeviceProcessEvents Table for Cleanup
 
-While reviewing the `DeviceProcessEvents` table for post-exfiltration activity, I observed a cleanup command executed at `2025-10-22T00:07:01.760647Z`: `xargs rm -f`. The use of xargs piped to rm -f is consistent with scripted deletion of one or more files and is likely an attempt to remove super_secret_script.sh and other artifacts to frustrate forensic recovery.
+While reviewing the `DeviceProcessEvents` table for post-exfiltration activity, I observed a cleanup command executed at `2025-10-22T00:07:01.760647Z`: `xargs rm -f`. The use of `xargs` piped to `rm -f` is consistent with scripted deletion of one or more files and is likely an attempt to remove super_secret_script.sh and other artifacts to frustrate forensic recovery.
 
 ```kql
 DeviceProcessEvents
@@ -104,7 +104,21 @@ DeviceProcessEvents
 
 ---
 
+### 6. DeviceNetworkEvents (network activity analysis)
 
+I reviewed the `DeviceNetworkEvents` table for outbound network connections during and after the script execution window. The analysis revealed network traffic consistent with Azure CLI blob storage activity, confirming a successful external connection to Azure endpoints. These events directly correlate with the previously identified `az storage blob upload` command, reinforcing the conclusion that the attacker successfully transferred data to an external Azure storage account.
+
+```kql
+DeviceNetworkEvents
+| where DeviceName contains "Iclab"
+| where Timestamp >= datetime(2025-10-21T23:59:46.704196Z)
+| project Timestamp, ActionType, InitiatingProcessCommandLine
+| order by Timestamp asc
+```
+
+<img width="1805" height="208" alt="Screenshot 2025-10-22 015755" src="https://github.com/user-attachments/assets/bad7c346-c2c2-4926-accc-b8d23c11f7e1" />
+
+-----
 ## Chronological Event Timeline 
 
 ### 1. Suspicious Login Detected

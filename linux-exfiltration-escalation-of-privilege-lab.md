@@ -53,15 +53,16 @@ DeviceFileEvents
 
 ### 3. Validated Impossible Travel Case
 
-The second account showed sign-ins 2,400 miles apart (California → Virginia) within 55 minutes.
+Following the file modification, the `DeviceProcessEvents` table shows execution of the command `usermod -aG sudo john_bolas`. This command appends the account `john_bolas` to the `sudo` group on Linux systems, effectively granting that account administrative (root) privileges. The occurrence of this command immediately after modification of `super_secret_script.sh` is highly suspicious and consistent with an attacker escalating privileges to establish persistent, privileged access on the host.
 
-Time (UTC)	Location	Application	IP Address
-4:22 PM	Sonora, CA	Azure Portal	136.175.31.162
-4:41 PM	Sonora, CA	Azure Portal	136.175.31.162
-5:36 PM	Ashburn, VA	Azure Portal	2600:1010:b1a8:97e8:316e:7602:bba0:1bcf
-5:56 PM	Boydton, VA	Azure CLI	74.249.42.6
-
-
+```kql
+DeviceFileEvents
+| where DeviceName contains "Iclab"
+| where ActionType == "FileCreated"
+| where InitiatingProcessCommandLine contains "usermod"
+| project Timestamp, ActionType, DeviceName, InitiatingProcessCommandLine
+| order by Timestamp asc
+```
 ---
 
 ### 4. Confirmed Tool Switching and Multi-Host Access

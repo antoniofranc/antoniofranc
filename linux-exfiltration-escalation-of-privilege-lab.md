@@ -1,6 +1,6 @@
-# Incident Response Lab
+# Threat Hunt Report: Linux, escalation of privileges and data exfiltration 
 
-- [Scenario Creation](https://github.com/antoniofranc/Threat-Hunting-Scenario-Impossible-Travel-Detection/blob/main/Threat-Hunting-Scenario-Impossible-Travel-Detection.md) 
+Analyst: 
 
 ## Platforms and Languages Leveraged
 - **Microsoft Azure** (Cloud Platform)  

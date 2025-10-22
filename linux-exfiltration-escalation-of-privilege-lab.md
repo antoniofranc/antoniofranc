@@ -1,4 +1,5 @@
-# Threat Hunt Report: Impossible Travel Detection
+# Incident Response Lab
+
 - [Scenario Creation](https://github.com/antoniofranc/Threat-Hunting-Scenario-Impossible-Travel-Detection/blob/main/Threat-Hunting-Scenario-Impossible-Travel-Detection.md) 
 
 ## Platforms and Languages Leveraged

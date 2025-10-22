@@ -121,27 +121,42 @@ DeviceNetworkEvents
 -----
 ## Chronological Event Timeline 
 
-### 1. Suspicious Login Detected
+### 1. Preparation and Script Creation
 
-- Timestamp: 2025-09-30T21:22Z
+- Timestamp: 2025-06-16T12:20:50.902852Z
+  
+- Event: Malicious script file created
+  
+- Command: touch super_secret_script.sh
+ 
+- File Path: /home/lab12/super_secret_script.sh
 
-- Event: Multiple logins detected for same user across U.S. East and West regions.
+- Analysis: Attacker creates empty script file using standard Linux touch command
 
-- Action: Alert triggered by Sentinel analytics rule.
+### 2. Script Development
 
-### 2. Investigation Initiated
+- Timestamp: 2025-10-21T23:59:46.704196Z
 
-- Timestamp: 2025-09-30T21:35Z
+- Event: Script opened and modified
 
-- Action: Security analyst (Antonio Francisco) began KQL investigation on affected user.
+- Command: nano super_secret_script.sh
 
-### 3. Impossible Travel Confirmed
+- File Path: /home/lab12/super_secret_script.sh
 
-- Timestamp: 2025-09-30T21:56Z
+- Analysis: Attacker uses nano editor to write malicious code into the script
 
-- Event: Authentication events from Sonora, CA and Ashburn, VA within 55 minutes.
 
-- Conclusion: Logically and physically impossible.
+### 3. Attack Execution
+
+- Timestamp: Oct 21, 2025 8:00:41 PM (2025-10-22T00:00:41.464697Z)
+- Event: Malicious script executed
+- Command: /bin/bash ./super_secret_script.sh
+- File Path: /home/lab12/super_secret_script.sh
+- Analysis: Attacker initiates automated attack sequence
+
+
+
+
 
 ### 4. Containment Actions Executed
 

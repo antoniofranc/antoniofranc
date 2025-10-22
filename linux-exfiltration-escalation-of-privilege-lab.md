@@ -64,7 +64,8 @@ DeviceFileEvents
 | project Timestamp, ActionType, DeviceName, InitiatingProcessCommandLine
 | order by Timestamp asc
 ```
-<img width="843" height="116" alt="image" src="https://github.com/user-attachments/assets/0cb89245-3dd6-46cb-b4e8-ef7f02fe86b2" />
+<img width="780" height="110" alt="image" src="https://github.com/user-attachments/assets/3b1b25a5-73e3-41e9-b748-f09cc183dc4a" />
+
 
 
 

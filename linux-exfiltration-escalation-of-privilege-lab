@@ -1,96 +1,170 @@
-Linux, Exfiltration and Escalation Of Privilege Lab
-Incident Response lab fully created by myself - covers creating a Linux vm, creating storage container in Azure, basic linux commands, script writing, creating rules in MDE, report writing, and more.
+# Threat Hunt Report: Impossible Travel Detection
+- [Scenario Creation](https://github.com/antoniofranc/Threat-Hunting-Scenario-Impossible-Travel-Detection/blob/main/Threat-Hunting-Scenario-Impossible-Travel-Detection.md) 
 
-Google docs covering the full lab: https://docs.google.com/document/d/1pcssRize7ksabLfACIgAkX-AGibAjiMY9YSy28MlmuU/edit?tab=t.0
+## Platforms and Languages Leveraged
+- **Microsoft Azure** (Cloud Platform)  
+- **Microsoft Sentinel** (SIEM)  
+- **Log Analytics Workspace**  
+- **Kusto Query Language (KQL)**  
+- **Azure Active Directory (Entra ID)**  
+- **Windows 10 Virtual Machine**  
 
-Youtube Video of whole lab: https://www.youtube.com/watch?v=YWhpAxc_Aco&ab_channel=GregEaster
+##  Scenario
 
-Scenario: Company A has been noticing some PII information about employees might be getting leaked because of recent phishing attempts that have been perpetrated. Such information includes address, email address, and phone number. All of this information is stored on a linux server as a hidden file where only the root/sudo users have read and write access. There was a report by another employee the other day of a fellow employee messing with the computer while the root administrator was in the bathroom. The company has decided to investigate this.
+Management suspects that some corporate accounts may be accessed from regions outside of the company’s approved geographic zones, potentially indicating **account sharing or credential compromise**.  
+Recent sign-in logs revealed logins from multiple countries within minutes, triggering suspicion of “**impossible travel**” — when a user appears to authenticate from two distant locations in an unrealistic time frame.  
 
-Platforms and Languages Leveraged
-Ubuntu Server 22.04 LTS
-EDR Platform: Microsoft Defender for Endpoint
-Kusto Query Language (KQL)
-Azure Blob Storage
-Steps Taken
-1. Searched the DeviceFileEvents Table
-One of the things we can look for is a file creation that the attacker might have performed in the time span that the company suspects (this is naturally when you placed the “attack script” in the VM). The day in question is X.
+The goal is to **detect and investigate abnormal login activity** by analyzing Azure AD SigninLogs using Microsoft Sentinel, validate true or false positives, and take response actions following the **NIST 800-61 Incident Response Lifecycle**.
 
-I used a query that searches for “FileCreated” Action type using the query below:
+### High-Level IoC Discovery Plan
 
-DeviceFileEvents
-| where DeviceName contains "VM_HOST_NAME"
-| where ActionType == "FileCreated"
-image
+1. Check `SigninLogs` for users authenticating from **multiple geographic locations** within a short period.  
+2. Identify patterns of **impossible travel** — logins from different countries/states within 7 days.  
+3. Investigate involved accounts for **tool switching** (Portal → CLI), **unusual IPs**, and **authentication errors**.  
+4. Validate if detected activity represents **legitimate remote work** or **compromise**.  
 
-Looking at the data above, a suspicious looking file called “super_secret_script.sh” was created on 2025-06-16T12:20:50.902852Z. There are two rows that have this filename, after investigating the contents we find the differences as follows:
 
-image
+---
 
-Touch is a linux command that creates the super_secret_script.sh while nano command opens said file in the nano text editor in Linux.
+## Steps Taken
 
-This is the first most interesting thing, but let's also look in this table and see if there’s anything else interesting.
+### 1. Queried `SigninLogs` Table for Multiple Regions
+Queried Azure AD sign-in data for users authenticating from **more than two unique geographic regions** in a 7-day period.
 
-DeviceFileEvents | where DeviceName contains "VM_HOST_NAME" | where ActionType == "FileCreated" | project Timestamp, DeviceName, InitiatingProcessCommandLine, InitiatingProcessParentFileName | order by Timestamp asc
+**Query used to locate events:**
 
-image
+```kql
+// Locate Instances of Potential Impossible Travel
+let TimePeriodThreshold = timespan(7d); // Change to how far back you want to look
+let NumberOfDifferentLocationsAllowed = 2;
+SigninLogs
+| where TimeGenerated > ago(TimePeriodThreshold)
+| summarize Count = count() by UserPrincipalName, UserId, City = tostring(parse_json(LocationDetails).city), State = tostring(parse_json(LocationDetails).state), Country = tostring(parse_json(LocationDetails).countryOrRegion)
+| project UserPrincipalName, City, State, Country
+| summarize PotentialImpossibleTravelInstances = count () by UserPrincipalName
+| where PotentialImpossibleTravelInstances > NumberOfDifferentLocationsAllowed
+```
+<div style="display:flex;flex-direction:column;gap:10px">
+  <img src="https://res.cloudinary.com/dk3bkl3ji/image/upload/v1760154342/Screenshot_2025-10-10_234316_s71u5u.png">
+</div>
 
-InitialProcessCommandLine gives us more insight into what effects could be had on the VM. After the command “nano super_secret_script.sh”, we see one more interesting row. “usermod -aG sudo john_smith” which is very suspicious as it gives the user John Smith sudo privileges, which is a backdoor into the system. The door is closing in!
+---
 
-2. Searched the DeviceProcessEvents For Script Execution
-DeviceProcessEvents
-| where Timestamp >= datetime(TIME_STAMP)
-| where DeviceName contains "VM_NAME"
-| project Timestamp, DeviceName, ActionType, InitiatingProcessCommandLine
-| order by Timestamp asc
-image
+### 2. Investigated User’s Logon Activity
 
-The date above is used to narrow down the timespan after the super_secret_script.sh was created and ordered by ascending to see events immediately after the file creation.
+Used targeted KQL queries to review sign-in locations and timestamps for both accounts.
 
-As we can see from the logs, one of the first rows at 2025-06-16T12:23:17.729273Z has value “/bin/bash ./super_secret_script.sh” for the InitiatingProcessCommandLine column. /bin/bash indicates the interpreter that is used, which is bash, and the next part is “./super_secret_script.sh” which shows that the script was executed by the attacker. Shortly after, we see a bunch of commands that indicate some suspicious behavior involving using the Azure CLI. At 2025-06-16T12:23:17.734244Z, we see a command involving uploading to an Azure storage blob account (storage blob upload), using an account key and a storage account. We also checked for anything resembling the script self-deleting since an audit of the VM was done, and the exact file and its contents were not found, but could not find a record referring to this outcome in this table or the DeviceFileEvents table.
+**Query used to locate event:**
 
-3. Quick look at the DeviceNetworkEvents
-Using command:
+```kql
 
-DeviceNetworkEvents
-| where DeviceName contains "VM_NAME"
-| where Timestamp >= datetime(TIMESTAMP)
-| project Timestamp, ActionType, InitiatingProcessCommandLine
-| order by Timestamp asc
-image
 
-We can see that we have a ConnectionRequest ActionType row involving Azure CLI blob storage, followed by a ConnectionSuccess row for the same request.
+SigninLogs
+| where UserPrincipalName =~ "fb4a5b8c3e2f1a9b8c7d6e5f4a3b2c1d8e7f6a5b4c3d2e1f0a9b8c7d6e5f4a3b@******.com"
+| where TimeGenerated between(datetime(2025-09-30 16:00:00) .. datetime(2025-09-30 18:00:00))
+| project 
+    TimeGenerated,
+    AppDisplayName,
+    IPAddress,
+    Location = strcat(tostring(parse_json(LocationDetails).city), ", ", tostring(parse_json(LocationDetails).state)),
+    ResultType
+| order by TimeGenerated asc
+```
+<img width="1436" height="255" alt="image" src="https://github.com/user-attachments/assets/fae5c1f3-b7c0-42ed-8d4a-9dc2a51a1f1f" />
 
-Note: The script does not appear in the Linux VM, unfortunately I can’t find the exact row in the database that represents the script self-deleting itself (maybe it’s there! Check it out). I looked for some reference to something close to “rm -- "$0" in the DeviceProcessEvents and DeviceFileEvents table but ultimately could not find it.
 
-Chronological Event Timeline
-1. File creation - super_secret_script.sh
-Timestamp: 2025-06-16T12:20:50.902852Z
-Event: The user creates a file called super_secret_script.sh through the touch command in Linux.
-Action: Bash script file created.
-File Path: /home/gattigcg1/super_secret_script.sh
-2. Opening script and writing it.
-Timestamp: 2025-06-16T12:22:51.98438Z
-Event: The user creates a file called super_secret_script.sh through the touch command in Linux.
-Action: Bash script opened in nano editor and obviously stuff was written into it.
-File Path: /home/gattigcg1/super_secret_script.sh
-3. Process Execution - super_secret_script.sh execution
-Timestamp: 2025-06-16T12:23:17.631238Z
-Event: The user executes the super_secret_script.sh.
-Action: Process creation detected.
-File Path: /home/gattigcg1/super_secret_script.sh
-4. Escalation of privilege - making john_smith a sudo user
-Timestamp: 2025-06-16T12:23:17.649853Z
-Event: The script grants sudo access to john_smith user.
-Action: Escalation of privilege.
-File Path: /home/gattigcg1/super_secret_script.sh
-5. Network Request to upload file to Azure Storage Account
-Timestamp: 2025-06-16T12:23:19.007669Z
-Event: The script uploads file .my_secret_file.txt to Azure Storage account named gcgstorage12 through the Azure CLI.
-Action: Exfiltration of PII data.
-File Path: /home/gattigcg1/.secret_data/.my_secret_file.txt
-Summary
-It looks like an employee gained access to the root account and installed a script. This script had 2 main functions. One function uploaded a file that contained PII information that was only previously accessible to accounts given sudo accounts to an Azure storage. The second function of the script was to give a backdoor to the actor by escalating the privilege of his account by giving his user account sudo access which would allow him to poke through the data more in the future. The script was then deleted.
+---
 
-Response Taken
-The user account that performed the exfiltration of data has been suspended temporarily awaiting further direction by management. The sudo privileges of this account were also removed just in case. This report was provided to the employee’s manager and upper management for further direction.
+### 3. Validated Impossible Travel Case
+
+The second account showed sign-ins 2,400 miles apart (California → Virginia) within 55 minutes.
+
+Time (UTC)	Location	Application	IP Address
+4:22 PM	Sonora, CA	Azure Portal	136.175.31.162
+4:41 PM	Sonora, CA	Azure Portal	136.175.31.162
+5:36 PM	Ashburn, VA	Azure Portal	2600:1010:b1a8:97e8:316e:7602:bba0:1bcf
+5:56 PM	Boydton, VA	Azure CLI	74.249.42.6
+
+
+---
+
+### 4. Confirmed Tool Switching and Multi-Host Access
+
+The attacker first accessed the Azure Portal through a browser, then switched to the Azure CLI, suggesting deeper system access.
+Multiple IPs from different providers confirmed the use of proxy/VPN or distributed infrastructure.
+
+
+---
+
+## Chronological Event Timeline 
+
+### 1. Suspicious Login Detected
+
+- Timestamp: 2025-09-30T21:22Z
+
+- Event: Multiple logins detected for same user across U.S. East and West regions.
+
+- Action: Alert triggered by Sentinel analytics rule.
+
+### 2. Investigation Initiated
+
+- Timestamp: 2025-09-30T21:35Z
+
+- Action: Security analyst (Antonio Francisco) began KQL investigation on affected user.
+
+### 3. Impossible Travel Confirmed
+
+- Timestamp: 2025-09-30T21:56Z
+
+- Event: Authentication events from Sonora, CA and Ashburn, VA within 55 minutes.
+
+- Conclusion: Logically and physically impossible.
+
+### 4. Containment Actions Executed
+
+- Timestamp: 2025-09-30T22:05Z
+
+- Actions:
+
+Disabled account fb4a5b8c3e2f1a9b8c7d6e5f4a3b2c1d8e7f6a5b4c3d2e1f0a9b8c7d6e5f4a3b@******.com
+
+Revoked credentials and active sessions
+
+Management notified
+
+### 5. Post-Incident Review
+
+- Timestamp: 2025-10-02T15:00Z
+
+- Action: Reviewed CLI activity, rotated credentials, and implemented new geo-fencing policies.
+ 
+
+---
+
+## Summary
+
+The Impossible Travel Detection rule in Microsoft Sentinel successfully identified a real account compromise.
+The attacker leveraged valid credentials to access the Azure Portal from geographically distant regions and escalated to command-line access via the Azure CLI.
+
+Findings:
+
+- 1 True Positive (Critical)
+
+- Use of multiple IPs and tools consistent with lateral movement
+
+- Detection logic effective and repeatable
+
+
+---
+
+## Response Taken
+
+- Compromised account disabled immediately
+
+- Tokens revoked and MFA enforced for all service accounts
+
+- Management notified of confirmed credential compromise
+
+- Enhanced Sentinel queries and policies deployed to reduce false positives
+
+---

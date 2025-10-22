@@ -17,7 +17,7 @@ Company A has been noticing some PII information about employees might be gettin
 
 ### 1. Searched the DeviceFileEvents
 
-I searched the `DeviceFileEvents` table for file activity during the suspected incident window. Two suspicious files named `super_secret_script.sh` were observed: one created at `2025-10-21T23:23:50.03483Z` and a later activity at `2025-10-21T23:59:46.704196Z`. The first event shows use of the `touch` command (file creation on Linux); the second shows `nano` (a command-line editor), indicating the file was opened and modified. These events are consistent with an attacker preparing and then editing a script on the host.
+I searched the `DeviceFileEvents` table for file activity during the suspected incident window. Two suspicious files named `super_secret_script.sh` were observed: one created at `2025-10-21T23:23:50.03483Z` and a later activity at `2025-10-21T23:59:46.704196Z`.
 
 **Query used to locate events:**
 
@@ -32,27 +32,21 @@ DeviceFileEvents
 
 ---
 
-### 2. Investigated User’s Logon Activity
+### 2. Suspicious Script Identification
 
-Used targeted KQL queries to review sign-in locations and timestamps for both accounts.
+While examining `DeviceFileEvents` for activity during the incident window, two events for `super_secret_script.sh` were observed: The first event shows use of the `touch` command (file creation on Linux); the second shows `nano` (a command-line editor), indicating the file was opened and modified. These events are consistent with an attacker preparing and then editing a script on the host.
 
 **Query used to locate event:**
 
 ```kql
-
-
-SigninLogs
-| where UserPrincipalName =~ "fb4a5b8c3e2f1a9b8c7d6e5f4a3b2c1d8e7f6a5b4c3d2e1f0a9b8c7d6e5f4a3b@******.com"
-| where TimeGenerated between(datetime(2025-09-30 16:00:00) .. datetime(2025-09-30 18:00:00))
-| project 
-    TimeGenerated,
-    AppDisplayName,
-    IPAddress,
-    Location = strcat(tostring(parse_json(LocationDetails).city), ", ", tostring(parse_json(LocationDetails).state)),
-    ResultType
-| order by TimeGenerated asc
+DeviceFileEvents
+| where DeviceName contains "Iclab" and ActionType == "FileCreated"
+| where FileName contains "super_secret_script.sh"
+| project Timestamp, InitiatingProcessCommandLine
+| sort by Timestamp asc
 ```
-<img width="1436" height="255" alt="image" src="https://github.com/user-attachments/assets/fae5c1f3-b7c0-42ed-8d4a-9dc2a51a1f1f" />
+<img width="1820" height="134" alt="Screenshot 2025-10-21 222354" src="https://github.com/user-attachments/assets/1698b11d-87e6-4b37-92df-b47cbeb27a48" />
+
 
 
 ---

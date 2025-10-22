@@ -34,7 +34,7 @@ DeviceFileEvents
 
 ### 2. Suspicious Script Identification
 
-While examining `DeviceFileEvents` for activity during the incident window, two events for `super_secret_script.sh` were observed: The first event shows use of the `touch` command (file creation on Linux); the second shows `nano` (a command-line editor), indicating the file was opened and modified. These events are consistent with an attacker preparing and then editing a script on the host.
+While examining `DeviceFileEvents` for activity during the incident window, two events for `super_secret_script.sh` were observed: The first event at `2025-10-21T23:23:50.03483Z` shows use of the `touch` command (file creation on Linux); the second at `2025-10-21T23:59:46.704196Z` shows `nano` (a command-line editor), indicating the file was opened and modified. 
 
 **Query used to locate event:**
 

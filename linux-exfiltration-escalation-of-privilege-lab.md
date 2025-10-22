@@ -45,7 +45,8 @@ DeviceFileEvents
 | project Timestamp, InitiatingProcessCommandLine
 | sort by Timestamp asc
 ```
-<img width="1820" height="134" alt="Screenshot 2025-10-21 222354" src="https://github.com/user-attachments/assets/1698b11d-87e6-4b37-92df-b47cbeb27a48" />
+<img width="777" height="108" alt="Screenshot 2025-10-21 224709" src="https://github.com/user-attachments/assets/9bf1182e-9c7a-4796-977e-f41f746bf410" />
+
 
 
 

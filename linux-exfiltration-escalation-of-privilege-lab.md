@@ -52,7 +52,7 @@ DeviceFileEvents
 
 ---
 
-### 3. Validated Impossible Travel Case
+### 3. Privilege Escalation Detection
 
 Following the file modification, the `DeviceProcessEvents` table shows execution of the command `usermod -aG sudo john_bolas`. This command appends the account `john_bolas` to the `sudo` group on Linux systems, effectively granting that account administrative (root) privileges. The occurrence of this command immediately after modification of `super_secret_script.sh` is highly suspicious and consistent with an attacker escalating privileges to establish persistent, privileged access on the host.
 
@@ -64,6 +64,10 @@ DeviceFileEvents
 | project Timestamp, ActionType, DeviceName, InitiatingProcessCommandLine
 | order by Timestamp asc
 ```
+<img width="843" height="116" alt="image" src="https://github.com/user-attachments/assets/0cb89245-3dd6-46cb-b4e8-ef7f02fe86b2" />
+
+
+
 ---
 
 ### 4. Confirmed Tool Switching and Multi-Host Access

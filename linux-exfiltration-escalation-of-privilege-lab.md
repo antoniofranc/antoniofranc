@@ -1,6 +1,7 @@
 # Threat Hunt Report: Linux, escalation of privileges and data exfiltration 
 
-
+**Analyst:** Antonio Francisco
+**Date Completed:** 
 
 ## Platforms and Languages Leveraged
 - **Microsoft Azure** (Cloud Platform)  

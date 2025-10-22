@@ -15,8 +15,9 @@ Company A has been noticing some PII information about employees might be gettin
 
 ## Steps Taken
 
-### 1. Queried `SigninLogs` Table for Multiple Regions
-Queried Azure AD sign-in data for users authenticating from **more than two unique geographic regions** in a 7-day period.
+### 1. Searched the DeviceFileEvents
+
+I searched the `DeviceFileEvents` table for file activity during the suspected incident window. Two suspicious files named `super_secret_script.sh` were observed: one created at `2025-10-21T23:23:50.03483Z` and a later activity at `2025-10-21T23:59:46.704196Z`. The first event shows use of the `touch` command (file creation on Linux); the second shows `nano` (a command-line editor), indicating the file was opened and modified. These events are consistent with an attacker preparing and then editing a script on the host.
 
 **Query used to locate events:**
 

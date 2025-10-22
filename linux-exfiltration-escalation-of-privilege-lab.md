@@ -4,20 +4,14 @@
 
 **Date Completed:** 10/22/2025
 
-## Platforms and Languages Leveraged
-- **Microsoft Azure** (Cloud Platform)  
-- **Microsoft Sentinel** (SIEM)  
-- **Log Analytics Workspace**  
-- **Kusto Query Language (KQL)**  
-- **Azure Active Directory (Entra ID)**  
-- **Windows 10 Virtual Machine**  
+
 
 ##  Scenario
 
-Management suspects that some corporate accounts may be accessed from regions outside of the company’s approved geographic zones, potentially indicating **account sharing or credential compromise**.  
-Recent sign-in logs revealed logins from multiple countries within minutes, triggering suspicion of “**impossible travel**” — when a user appears to authenticate from two distant locations in an unrealistic time frame.  
+Company A has been noticing some PII information about employees might be getting leaked because of recent phishing attempts that have been perpetrated. Such information includes address, email address, and phone number. All of this information is stored on a linux server as a hidden file where only the root/sudo users have read and write access. There was a report by another employee the other day of a fellow employee messing with the computer while the root administrator was in the bathroom. The company has decided to investigate this. 
 
-The goal is to **detect and investigate abnormal login activity** by analyzing Azure AD SigninLogs using Microsoft Sentinel, validate true or false positives, and take response actions following the **NIST 800-61 Incident Response Lifecycle**.
+
+
 
 ### High-Level IoC Discovery Plan
 

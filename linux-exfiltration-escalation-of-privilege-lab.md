@@ -1,7 +1,6 @@
 # Threat Hunt Report: Linux, escalation of privileges and data exfiltration 
 
-**Analyst:** Antonio Francisco
-
+**Analyst**: Antonio Francisco
 **Date Completed:** 10/22/2025
 
 ## Platforms and Languages Leveraged

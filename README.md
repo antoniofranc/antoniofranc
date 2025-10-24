@@ -18,9 +18,17 @@ I'm deeply passionate about cybersecurity and thrive on tackling complex securit
 
 ## 🤳 Connect With Me  [<img align="left" alt="___________ | LinkedIn" width="22px" src="https://cdn.jsdelivr.net/npm/simple-icons@v3/icons/linkedin.svg" />][linkedin]
 
-
-
 [linkedin]: https://linkedin.com/in/antoniofrancisco-085948210/
+
+
+-------
+**Languages** 
+- English
+- Portuguese
+- Spanish
+- French 
+
+
 
 
 <!--

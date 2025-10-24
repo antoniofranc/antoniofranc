@@ -24,6 +24,7 @@ I'm deeply passionate about cybersecurity and thrive on tackling complex securit
 
 
 [linkedin]: https://linkedin.com/in/antoniofrancisco-085948210/
+
 **Languages** 
 - English
 - Portuguese

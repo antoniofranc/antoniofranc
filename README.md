@@ -13,13 +13,13 @@ I'm deeply passionate about cybersecurity and thrive on tackling complex securit
 - **[Threat Hunting Scenario (Tor Browser Usage)](https://github.com/antoniofranc/Threat-hunting-scenario-tor-/blob/main/README.md)**
 - **[Threat Hunting Scenario (Impossible Travel Detection)](https://github.com/antoniofranc/Threat-Hunting-Scenario-Impossible-Travel-Detection/blob/main/README.md)**
 - **[Threat Hunting Scenario (Firefox Used as a Web Shell Relay)](https://github.com/antoniofranc/Threat-Hunt-Scenario-Firefox-as-a-Web-Shell-Relay-/blob/main/README.md)**
-- **[Azure Sentinel Attack Maps Project](https://github.com/antoniofranc/Entra-ID-Authentication-Success-Failures/blob/main/README.md)**
+- **[Azure Sentinel Attack Maps](https://github.com/antoniofranc/Entra-ID-Authentication-Success-Failures/blob/main/README.md)**
 
 ##  🔑 Identification, Authentication, and Authorization       
 
 - **[Implementing Access Controls in Windows Machine](https://github.com/antoniofranc/-Implementing-Access-Controls-in-Windows-Machine/blob/main/README.md)**
 - **[Linux Access Control Management System](https://github.com/antoniofranc/Managing-Access-Controls-in-Linux-Machine/blob/main/README.md)**
-- **[ Implementing Role-Based Access Control in Windows Admin Center (WAC)](https://github.com/antoniofranc/Implementing-Role-Based-Access-Control-in-Windows-Admin-Center-WAC-/blob/main/README.md)**
+- **[Implementing Role-Based Access Control in Windows Admin Center (WAC)](https://github.com/antoniofranc/Implementing-Role-Based-Access-Control-in-Windows-Admin-Center-WAC-/blob/main/README.md)**
 <hr/>
 
 ## 🤳 Connect With Me  [<img align="left" alt="___________ | LinkedIn" width="22px" src="https://cdn.jsdelivr.net/npm/simple-icons@v3/icons/linkedin.svg" />][linkedin]
